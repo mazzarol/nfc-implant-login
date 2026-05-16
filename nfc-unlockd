@@ -4,7 +4,7 @@
 """
 NFC implant session unlock daemon. Watches reader, unlocks on authorized tap.
 
-Repository: https://github.com/mazzarol/nfc-host-login.git
+Repository: https://github.com/mazzarol/nfc-implant-login.git
 NFC Implants: https://dangerousthings.com
 Tested on: Ubuntu 24.04.4 LTS (Noble Numbat)
 """

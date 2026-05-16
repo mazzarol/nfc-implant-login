@@ -1,5 +1,5 @@
 # NFC Implant Login - Session unlock daemon service
-# Repository: https://github.com/mazzarol/nfc-host-login.git
+# Repository: https://github.com/mazzarol/nfc-implant-login.git
 # NFC Implants: https://dangerousthings.com
 
 [Unit]

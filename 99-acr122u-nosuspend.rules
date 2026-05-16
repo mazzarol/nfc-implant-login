@@ -1,5 +1,5 @@
 # NFC Implant Login - udev rules for ACS ACR122U NFC reader
-# Repository: https://github.com/mazzarol/nfc-host-login.git
+# Repository: https://github.com/mazzarol/nfc-implant-login.git
 # NFC Implants: https://dangerousthings.com
 #
 # Disable USB autosuspend for ACS ACR122U NFC reader

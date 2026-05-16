@@ -4,7 +4,7 @@
 set -euo pipefail
 
 # ── NFC Implant Login — installer ──
-# Repository: https://github.com/mazzarol/nfc-host-login.git
+# Repository: https://github.com/mazzarol/nfc-implant-login.git
 # NFC Implants: https://dangerousthings.com
 # Tested on: Ubuntu 24.04.4 LTS (Noble Numbat)
 # Run: sudo ./install.sh YOUR_USERNAME "04 11 22 33 44 55 66" ["04 AA BB CC DD EE FF" ...]

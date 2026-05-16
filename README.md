@@ -1,7 +1,7 @@
 # NFC Implant Login
 
 > **Author:** mazzarol  
-> **Repository:** https://github.com/mazzarol/nfc-host-login.git  
+> **Repository:** https://github.com/mazzarol/nfc-implant-login.git  
 > **NFC Implants by:** https://dangerousthings.com  
 > **License:** [GPL-3.0-or-later](LICENSE)  
 > **Tested on:** Ubuntu 24.04.4 LTS (noble)

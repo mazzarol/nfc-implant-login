@@ -3,7 +3,7 @@
 # Copyright (C) 2026 mazzarol
 set -euo pipefail
 # ── NFC Implant Login — uninstaller ──
-# Repository: https://github.com/mazzarol/nfc-host-login.git
+# Repository: https://github.com/mazzarol/nfc-implant-login.git
 # NFC Implants: https://dangerousthings.com
 # Tested on: Ubuntu 24.04.4 LTS (Noble Numbat)
 
