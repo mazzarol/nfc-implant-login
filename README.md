@@ -37,8 +37,10 @@ Falls back to password if the reader is missing or broken.
 
 ```bash
 # 1. Plug in your ACR122U reader
-# 2. Find your implant UIDs (use pcsc_scan or the included script)
+# 2. Install dependencies
 sudo apt-get install pcscd pcsc-tools python3-pyscard
+
+# 3. Find your implant UID — PLACE YOUR IMPLANT ON THE READER FIRST, then run:
 python3 -c "
 from smartcard.System import readers
 from smartcard.util import toHexString
@@ -47,11 +49,12 @@ r.connect()
 resp, sw1, sw2 = r.transmit([0xFF, 0xCA, 0x00, 0x00, 0x00])
 print(toHexString(resp))
 "
+# Expected output: 04 XX XX XX XX XX XX (7 bytes, 04 prefix = NXP chip)
 
 Note: The 04 prefix means "NXP Semiconductors" — the chips tested are NXP-made.
 
 
-# 3. Install
+# 4. Install
 chmod +x install.sh uninstall.sh
 sudo ./install.sh YOUR_USERNAME "04 11 22 33 44 55 66" "04 AA BB CC DD EE FF"
 
