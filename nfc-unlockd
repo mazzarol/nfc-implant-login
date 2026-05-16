@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 mazzarol
+"""
+NFC implant session unlock daemon. Watches reader, unlocks on authorized tap.
+
+Repository: https://github.com/mazzarol/nfc-host-login.git
+NFC Implants: https://dangerousthings.com
+Tested on: Ubuntu 24.04.4 LTS (Noble Numbat)
+"""
+import os, sys, json, time, subprocess
+
+CONFIG = "/etc/nfc-auth.conf"
+COOLDOWN = 3  # seconds between unlocks
+
+def get_allowed_uids(user):
+    try:
+        with open(CONFIG) as f:
+            config = json.load(f)
+        uids = config.get(user, [])
+        return [uid.replace(" ", "").replace(":", "").upper() for uid in uids]
+    except Exception:
+        return []
+
+def main():
+    user = os.environ.get("USER") or os.environ.get("LOGNAME") or "peter"
+    allowed = get_allowed_uids(user)
+    if not allowed:
+        print(f"No UIDs configured for {user}", file=sys.stderr)
+        sys.exit(1)
+
+    from smartcard.System import readers
+    from smartcard.util import toHexString
+
+    print("NFC unlock daemon started", flush=True)
+    GET_UID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
+    last_unlock = 0
+
+    while True:
+        r = readers()
+        if not r:
+            time.sleep(2)
+            continue
+
+        try:
+            conn = r[0].createConnection()
+            conn.connect()
+            resp, sw1, sw2 = conn.transmit(GET_UID)
+            conn.disconnect()
+
+            if sw1 == 0x90 and sw2 == 0x00:
+                uid = toHexString(resp).replace(" ", "").replace(":", "").upper()
+                if uid in allowed:
+                    now = time.time()
+                    if now - last_unlock > COOLDOWN:
+                        last_unlock = now
+                        subprocess.run(
+                            ["loginctl", "unlock-session"],
+                            capture_output=True,
+                            timeout=5,
+                        )
+                        print(f"Unlocked: {uid}", flush=True)
+        except Exception:
+            pass
+
+        time.sleep(0.5)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,8 @@
+# NFC Implant Login - Configuration file
+# Repository: https://github.com/mazzarol/nfc-host-login.git
+# NFC Implants: https://dangerousthings.com
+# Copy to /etc/nfc-auth.conf and update with your username and implant UIDs
+
+{
+    "YOUR_USERNAME": ["04 11 22 33 44 55 66", "04 AA BB CC DD EE FF"]
+}
