@@ -1,13 +1,10 @@
 # NFC Implant Login
 
-> **Author:** mazzarol  
-> **Repository:** https://github.com/mazzarol/nfc-implant-login.git  
-> **NFC Implants by:** https://dangerousthings.com  
-> **License:** [GPL-3.0-or-later](LICENSE)  
+> **Author:** mazzarol
+> **License:** [GPL-3.0-or-later](LICENSE)
 > **Tested on:** Ubuntu 24.04.4 LTS (noble)
 
-Walk up to your Linux desktop, tap your NFC implant, and you're in.
-No password, no typing, no Enter key.
+Walk-up-and-tap NFC implant login for Linux/GNOME with ACS ACR122U reader.
 
 Note: If you need to press a key before scanning after screen blank, the xHCI USB
 root hub is suspending. The included `98-xhci-nosuspend.rules` udev rule fixes this
@@ -19,8 +16,8 @@ by preventing root hubs from runtime-suspending — see **Power Considerations**
 Two components:
 
 **nfc-unlockd** — a background daemon that watches the NFC reader.
-When you tap an authorized implant, it unlocks your GNOME session instantly.
-Covers the 90% case: screen locked, walk up, tap, in.
+Tap an implant to unlock. Hold an implant for 2 seconds to lock.
+No typing, no Enter key.
 
 **nfc-check** — a PAM module for GDM login and sudo.
 Press Enter (any character) then tap your implant to authenticate.
@@ -67,8 +64,9 @@ sudo ./install.sh YOUR_USERNAME "04 11 22 33 44 55 66" "04 AA BB CC DD EE FF"
 | Action | Method |
 |--------|--------|
 | Unlock locked session | Tap implant on reader |
-| Cold-boot GDM login | Type any key + Enter + tap implant |
-| Sudo in terminal | Tap implant + Enter (or type password) |
+| Lock unlocked session | Hold implant 2+ seconds |
+| Cold-boot GDM login | Press Enter + tap implant |
+| Sudo in terminal | Tap implant + Enter (or password) |
 | Reader broken/unplugged | Password login works normally |
 
 ## Files
