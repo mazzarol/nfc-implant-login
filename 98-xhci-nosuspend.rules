@@ -1,0 +1,5 @@
+# Prevent USB root hubs from suspending — keeps NFC reader alive during screen blank
+# USB 2.0 root hubs (idVendor=1d6b, idProduct=0002)
+ACTION=="add", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="1d6b", ATTR{idProduct}=="0002", ATTR{power/control}:="on"
+# USB 3.0 root hubs (idVendor=1d6b, idProduct=0003)
+ACTION=="add", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="1d6b", ATTR{idProduct}=="0003", ATTR{power/control}:="on"

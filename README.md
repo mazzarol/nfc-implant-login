@@ -9,6 +9,11 @@
 Walk up to your Linux desktop, tap your NFC implant, and you're in.
 No password, no typing, no Enter key.
 
+Note: If you need to press a key before scanning after screen blank, the xHCI USB
+root hub is suspending. The included `98-xhci-nosuspend.rules` udev rule fixes this
+by preventing root hubs from runtime-suspending — see **Power Considerations** below.
+
+
 ## How it works
 
 Two components:
@@ -43,6 +48,9 @@ resp, sw1, sw2 = r.transmit([0xFF, 0xCA, 0x00, 0x00, 0x00])
 print(toHexString(resp))
 "
 
+Note: The 04 prefix means "NXP Semiconductors" — the chips tested are NXP-made.
+
+
 # 3. Install
 chmod +x install.sh uninstall.sh
 sudo ./install.sh YOUR_USERNAME "04 11 22 33 44 55 66" "04 AA BB CC DD EE FF"
@@ -70,7 +78,8 @@ nfc-implant-login/
 ├── nfc-unlockd                   # Background daemon → ~/.local/bin/
 ├── nfc-unlockd.service           # systemd user service
 ├── nfc-auth.conf.example         # Config file format
-├── 99-acr122u-nosuspend.rules    # udev rule (USB power)
+├── 98-xhci-nosuspend.rules      # udev rule (root hub power)
+├── 99-acr122u-nosuspend.rules    # udev rule (device power)
 ├── pcscd-override.conf           # Keeps pcscd alive
 └── README.md
 ```
@@ -87,6 +96,32 @@ Edit `/etc/nfc-auth.conf`:
 ```
 
 Restart the daemon: `systemctl --user restart nfc-unlockd`
+
+## Power Considerations
+
+The `98-xhci-nosuspend.rules` udev rule (installed by default) prevents the
+USB root hub from entering runtime suspend. This is what lets the reader work
+during screen blank without requiring a keypress first.
+
+**Desktops and NUCs**: negligible impact — roughly 0.5–2 W extra at idle.
+Leave it enabled.
+
+**Laptops on battery**: the rule blocks package C-state entry, increasing idle
+drain by roughly 5% to 10%. If battery life matters more than tap-to-unlock during
+screen blank, remove the rule:
+
+```bash
+sudo rm /etc/udev/rules.d/98-xhci-nosuspend.rules
+sudo udevadm control --reload-rules
+```
+
+The trade-off: you'll need to press a key to wake the bus before scanning after
+the screen has been blank for a while. The daemon still unlocks instantly once
+the bus is awake. A narrower fix (targeting only the specific bus number) is
+possible but bus numbering is not stable across reboots, so it's not included.
+
+**Security**: these udev rules only control USB power management. They do not
+affect authentication, authorization, or reader access controls.
 
 ## Uninstall
 
