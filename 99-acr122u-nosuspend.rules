@@ -1,6 +1,6 @@
-# NFC Implant Login - udev rules for ACS ACR122U NFC reader
-# Repository: https://github.com/mazzarol/nfc-implant-login.git
-# NFC Implants: https://dangerousthings.com
-#
-# Disable USB autosuspend for ACS ACR122U NFC reader
-SUBSYSTEM=="usb", ATTR{idVendor}=="072f", ATTR{idProduct}=="2200", ATTR{power/control}:="on"
+# ACR122U NFC reader: keep alive across screen blank AND pin group to pcscd.
+# Ubuntu 26.04 ships libnfc6 -> 93-pn53x.rules which overrides the stock
+# 92-libacsccid1.rules GROUP="pcscd" back to "plugdev", so the pcscd service
+# (user pcscd, gid 980) loses device access -> LIBUSB_ERROR_ACCESS.
+# This file (99 > 93) restores pcscd group ownership.
+SUBSYSTEM=="usb", ATTR{idVendor}=="072f", ATTR{idProduct}=="2200", ATTR{power/control}:="on", GROUP="pcscd", MODE="0660"

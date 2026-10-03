@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """NFC implant daemon — tap to unlock, hold 2s to lock."""
 import os, sys, json, time, subprocess
 
@@ -18,23 +18,41 @@ def get_allowed(user):
 
 
 def is_locked():
-    """Check if the current session is locked."""
+    """Check if the current graphical session is locked."""
     try:
-        # Get session ID
+        # Get session list
         sid = subprocess.run(
             ["loginctl", "list-sessions", "--no-legend"],
             capture_output=True, text=True, timeout=3,
         )
+        user = os.environ.get("USER", "peter")
+        target = None
+        # Prefer the graphical 'user'-class session (has a real TTY). The
+        # 'manager' session (systemd user manager) has tty '-' and never locks;
+        # on Ubuntu 26.04 it sorts first, so we must not pick it blindly.
         for line in sid.stdout.strip().split("\n"):
             parts = line.split()
-            if len(parts) >= 4 and parts[2] == os.environ.get("USER", "peter"):
-                session_id = parts[0]
-                r = subprocess.run(
-                    ["loginctl", "show-session", session_id, "-p", "LockedHint", "--value"],
-                    capture_output=True, text=True, timeout=3,
-                )
-                return r.stdout.strip() == "yes"
-        return False
+            if len(parts) < 7:
+                continue
+            if parts[2] != user:
+                continue
+            if parts[5] == "user" and parts[6] != "-":
+                target = parts[0]
+                break
+        # Fallback: any session for this user
+        if not target:
+            for line in sid.stdout.strip().split("\n"):
+                parts = line.split()
+                if len(parts) >= 4 and parts[2] == user:
+                    target = parts[0]
+                    break
+        if not target:
+            return False
+        r = subprocess.run(
+            ["loginctl", "show-session", target, "-p", "LockedHint", "--value"],
+            capture_output=True, text=True, timeout=3,
+        )
+        return r.stdout.strip() == "yes"
     except Exception:
         return False
 
